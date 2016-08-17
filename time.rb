@@ -1,5 +1,3 @@
-# works with one submenu and long main menu
-
 require 'time'
 require 'date'
 require 'terminal-table'
@@ -39,7 +37,6 @@ class Alarms
   attr_accessor :wake_hr, :wake_mins, :sleep_length
 end
 
-# putting a menu in its own class makes it local. keeps variables reuseable and code more scalable and easier to work through logic.
 class MainMenu
   def ask
     puts "Welcome to Sleep Tuner"
@@ -55,11 +52,11 @@ class MainMenu
   def run
     exit = false
     until exit do
-      cls
       ask
       menu_input = gets.chomp.to_i
 
       if menu_input == 1
+        # sub menu 1
         #login.auth #capture login
         #work on authentication method
         cls
@@ -71,27 +68,12 @@ class MainMenu
         #end
         cls
 
-        puts "Enter the time you need to wake up"
-        puts "Format HH"
-        wake_hr = gets.chomp.to_i
+        puts "Enter Time to wake"
+        # perform calculation
 
-        # opens files needed to write time variables
-        wh = 'wh.txt'
-        alarm_hr = open(wh, 'w+')
-        alarm_hr.write("#{wake_hr}")
-        alarm_hr.close
-
-        puts "Format MM"
-        wake_mins = gets.chomp.to_i
-
-        # opens files needed to write time variables
-        wm = 'wm.txt'
-        alarm_min = open(wm, 'w+')
-        alarm_min.close
-
-        puts "time to sleep is #{wake_hr}"
-
-        sleep (1.5)
+        puts "time to sleep is"
+        #sub menu 2 - sleep feedback
+        sleep (0.5)
 
       elsif menu_input == 3
         cls
@@ -151,15 +133,12 @@ class SubMenu
       menu_input = gets.chomp.to_i
 
       if menu_input  == 1
-        cls
         puts "No adjustment needed"
 
       elsif menu_input == 2
-        cls
         puts "sleep time adjusted + 10 mins" # adjust sleep length + 10 mins
 
       elsif menu_input == 3
-        cls
         puts "Exiting"
         exit = true
 
@@ -168,28 +147,26 @@ class SubMenu
       end
     end
   end
+
 end
 
-class OpenFiles
-  def initialize
-  end
-  def open_files
-    # opens files needed to write time variables
-    wm = 'wm.txt'
-    alarm_min = open(wm, 'w+')
-
-    wh = 'wh.txt'
-    alarm_hr = open(wh, 'w+')
-  end
+def mainmenu
+  puts "Welcome to Sleep Tuner"
+  puts "Please select"
+  puts "1. Login"
+  puts "2. Wake Up Time"
+  puts "3. Sleep feedback"
+  puts "4. Sleep Time"
+  puts "5. Create Account"
+  puts "6. Exit"
 end
-
 
 def cls
   system 'cls'
 end
 
-login = User.new("","")
-alm = Alarms.new("","","")
+# login = User.new("","")
+# alm = Alarms.new("","","")
 
 user_file = 'uf.txt'
 user_list = open(user_file, 'a+')
@@ -197,6 +174,22 @@ user_list = open(user_file, 'a+')
 menu = MainMenu.new
 menu.run
 
+#
+# #main menu
+# exit = false
+#
+# until exit do
+#   mainmenu
+#   menu_input = gets.chomp.to_i
+#
+#   if menu_input == 1
+#     # sub menu 1
+#     #login.auth #capture login
+#     #work on authentication method
+#     cls
+#     puts "logged in"
+#     sleep (0.5)
+#
 #   elsif menu_input == 2
 #     #if #password matches username key in password file then grant access.
 #     #end
@@ -265,49 +258,51 @@ menu.run
 #   file_name = file_name
 #   operation = open(file_name, 'r+')
 
-  # copied
-      # # opens files needed to write time variables
-      # wm = 'wm.txt'
-      # alarm_min = open(wm, 'r+')
-      #
-      # wh = 'wh.txt'
-      # alarm_hr = open(wh, 'r+')
 
-# do not edit below this Line
-# ----------------------------------------
+# opens files needed to write time variables
+wm = 'wm.txt'
+alarm_min = open(wm, 'r+')
 
-  #copied
-        # puts "Enter the time you need to wake up"
-        # puts "Format HH"
-        # wake_hr = gets.chomp
-        # # writes input to file
-        # alarm_hr.write("#{wake_hr}")
+wh = 'wh.txt'
+alarm_hr = open(wh, 'r+')
 
-# converts minutes to ruby time format
-time_converted = wake_mins.scan(/.{1}|.+/).join(",")
-# writes variable to file
-alarm_min.write("#{time_converted}")
-alarm_min.close
-
-# variable that changes to adjust amount of time you sleep (includes time needed to fall asleep)
-# starts at 7.5 hours + 15 mins (25200 + 900 = 26100)
-# (typical sleep cycle consisting of 1.5 hour blocks and average time needed to fall asleep)
-sleep_length = 26100
-
-# creates time as an object
-time = Time.new
-#grabs todays date then adds one to get next day
-next_day = time.day + 1
-
-# sets t as tomorrows date at 8am (format is hh,m,m)
-t = Time.new(time.year, time.month, next_day, "#{wake_hr}", "#{time_converted}")
-# calculates the date and time in seconds before the above defined time
-# time - sleep_length - time to fall asleep
-sleep_at = t - sleep_length
-
-alarm_time = open(wm, 'r+')
-
-display_min = 'time_converted'.tr(',', '')
-puts "Your desired wake up time is #{wake_hr}:#{wake_mins} am"
-print "You should sleep at #{sleep_at}"
-alarm_time.close
+# # do not edit below this Line
+# # ----------------------------------------
+#
+# puts "Enter the time you need to wake up"
+# puts "Format HH"
+# wake_hr = gets.chomp
+# # writes input to file
+# alarm_hr.write("#{wake_hr}")
+#
+# puts "Format MM"
+# wake_mins = gets.chomp
+#
+# # converts minutes to ruby time format
+# time_converted = wake_mins.scan(/.{1}|.+/).join(",")
+# # writes variable to file
+# alarm_min.write("#{time_converted}")
+# alarm_min.close
+#
+# # variable that changes to adjust amount of time you sleep (includes time needed to fall asleep)
+# # starts at 7.5 hours + 15 mins (25200 + 900 = 26100)
+# # (typical sleep cycle consisting of 1.5 hour blocks and average time needed to fall asleep)
+# sleep_length = 26100
+#
+# # creates time as an object
+# time = Time.new
+# #grabs todays date then adds one to get next day
+# next_day = time.day + 1
+#
+# # sets t as tomorrows date at 8am (format is hh,m,m)
+# t = Time.new(time.year, time.month, next_day, "#{wake_hr}", "#{time_converted}")
+# # calculates the date and time in seconds before the above defined time
+# # time - sleep_length - time to fall asleep
+# sleep_at = t - sleep_length
+#
+# alarm_time = open(wm, 'r+')
+#
+# display_min = 'time_converted'.tr(',', '')
+# puts "Your desired wake up time is #{wake_hr}:#{wake_mins} am"
+# print "You should sleep at #{sleep_at}"
+# alarm_time.close
